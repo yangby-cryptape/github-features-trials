@@ -1,0 +1,19 @@
+bootnode: node0
+instances:
+  node0:
+    id: 0
+    type: c5.large
+    size: 60
+    deploy:
+      ckb:
+        repo: https://github.com/nervosnetwork/ckb
+        version: 988a987
+        enable_miner: true
+  node2:
+    id: 2
+    type: c5.large
+    size: 60
+    deploy:
+      ckb:
+        repo: https://github.com/nervosnetwork/ckb
+        version: 988a987
