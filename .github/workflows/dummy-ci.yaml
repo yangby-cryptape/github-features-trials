@@ -1,5 +1,13 @@
 name: Dummy CI
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - staging
+      - trying
+      - develop
+  pull_request:
+    branches:
+      - master
 jobs:
   test-on-windows-2019:
     name: Test on Windows 2019
