@@ -1,0 +1,24 @@
+status = [
+  "Test on Windows 2019",
+  "Test on Ubuntu 20.04",
+  "Test on Ubuntu 18.04",
+  "Test on Ubuntu 16.04",
+  "Test on macOS 10.15"
+]
+pr_status = [
+  "Test on Windows 2019",
+  "Test on Ubuntu 20.04",
+  "Test on Ubuntu 18.04",
+  "Test on Ubuntu 16.04",
+  "Test on macOS 10.15"
+]
+block_labels = [
+    "do-not-merge"
+]
+timeout_sec = 7200
+required_approvals = 0
+use_codeowners = false
+use_squash_merge = false
+[committer]
+name = "Boyu Yang [Bot]"
+email = "yangby@cryptape.com"
