@@ -1,10 +1,10 @@
 name: Bors
 on:
-  pull_request:
-    types: [labeled]
+  pull_request_review:
+    types: [submitted]
 jobs:
   auto-merge:
-    if: ${{ github.event.label.name == 'approved' }}
+    if: ${{ github.event.review.state == 'approved' }}
     name: Auto Merge
     runs-on: ubuntu-latest
     steps:

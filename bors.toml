@@ -16,7 +16,7 @@ block_labels = [
     "do-not-merge"
 ]
 timeout_sec = 7200
-required_approvals = 0
+required_approvals = 1
 use_codeowners = false
 use_squash_merge = false
 [committer]
