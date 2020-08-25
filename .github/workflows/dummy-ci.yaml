@@ -1,0 +1,28 @@
+name: Dummy CI
+on: [push, pull_request]
+jobs:
+  test-on-windows-2019:
+    name: Test on Windows 2019
+    runs-on: windows-2019
+    steps:
+      - run: $true
+  test-on-ubuntu-20_04:
+    name: Test on Ubuntu 20.04
+    runs-on: ubuntu-20.04
+    steps:
+      - run: true
+  test-on-ubuntu-18_04:
+    name: Test on Ubuntu 18.04
+    runs-on: ubuntu-18.04
+    steps:
+      - run: true
+  test-on-ubuntu-16_04:
+    name: Test on Ubuntu 16.04
+    runs-on: ubuntu-16.04
+    steps:
+      - run: true
+  test-on-macos-10_15:
+    name: Test on macOS 10.15
+    runs-on: macos-10.15
+    steps:
+      - run: true
