@@ -1,0 +1,37 @@
+name: CI Tests
+on:
+  workflow_run:
+    workflows: [ "CI Checks" ]
+    types: [ completed, requested ]
+defaults:
+  run:
+    shell: bash
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -F warnings
+  RUST_BACKTRACE: full
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [ linux, windows, macos ]
+        include:
+          - build: linux
+            os: ubuntu-latest
+            rust: 1.48.0
+          - build: windows
+            os: windows-latest
+            rust: 1.48.0
+          - build: macos
+            os: macos-latest
+            rust: 1.48.0
+      fail-fast: true
+      max-parallel: 3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cargo build --verbose --all
+      - name: Test
+        run: cargo test --verbose --all

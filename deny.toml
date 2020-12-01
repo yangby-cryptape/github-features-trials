@@ -1,0 +1,7 @@
+[licenses]
+allow = [
+    "AGPL-3.0",
+]
+[sources]
+allow-registry = []
+allow-git = []
