@@ -6,3 +6,9 @@ edition = "2018"
 license = "AGPL-3.0-or-later"
 
 [dependencies]
+libc = "0.2.101"
+
+[build-dependencies]
+bindgen = "0.59.1"
+cc = "1.0.70"
+cmake = "0.1.45"

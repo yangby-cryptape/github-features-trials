@@ -9,57 +9,105 @@ defaults:
     shell: bash
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: -F warnings
+  RUSTFLAGS: -D warnings
   RUST_BACKTRACE: full
+  RUST_TOOLCHAIN: 1.55.0
 jobs:
   rustfmt:
     name: Checks / Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup
-        run: cargo fmt --version || rustup component add rustfmt
-      - name: Run
-        run: cargo fmt --all -- --check
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          components: rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
   clippy:
     name: Checks / Clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup
-        run: cargo clippy --version || rustup component add clippy
-      - name: Run
-        run: cargo clippy -- --deny warnings
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          components: clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- --deny warnings
   cargo-deny:
     name: Checks / Deny
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Generate Cache Key
+        id: cache-key
+        run: echo "::set-output name=yyyymm::$(/bin/date -u "+%Y%m")"
+      - uses: actions/cache@v2
+        id: cache-cargo-deny
+        with:
+          path: ~/.cargo/bin/cargo-deny
+          key: ${{ runner.os }}-cargo-deny-${{ steps.cache-key.outputs.yyyymm }}
       - name: Setup
+        if: steps.cache-cargo-deny.outputs.cache-hit != 'true'
         run: cargo deny --version || cargo install cargo-deny --locked
-      - name: Run
-        run: cargo deny check --hide-inclusion-graph --show-stats
+      - uses: actions-rs/cargo@v1
+        with:
+          command: deny
+          args: check --hide-inclusion-graph --show-stats
   test:
     name: Tests / Build & Test
+    needs: [ rustfmt ]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [ linux, windows, macos ]
-        include:
-          - build: linux
-            os: ubuntu-latest
-            rust: 1.48.0
-          - build: windows
-            os: windows-latest
-            rust: 1.48.0
-          - build: macos
-            os: macos-latest
-            rust: 1.48.0
+        rust: [ stable ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
       fail-fast: true
       max-parallel: 3
     steps:
       - uses: actions/checkout@v2
-      - name: Build
-        run: cargo build --verbose --all
-      - name: Test
-        run: cargo test --verbose --all
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+      # Workaround to resolve link error with C:\msys64\mingw64\bin\libclang.dll
+      - name: Remove msys64
+        if: runner.os == 'Windows'
+        run: rm -rf /c/msys64
+      - name: Install Dependencies
+        if: runner.os == 'Windows'
+        run: choco install llvm -y
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --all
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --verbose --all
+  success:
+    name: Success
+    if: ${{ success() }}
+    needs: [ clippy, cargo-deny, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Succeed
+        run: exit 0

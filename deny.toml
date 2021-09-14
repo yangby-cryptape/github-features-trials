@@ -1,7 +1,23 @@
+[advisories]
+vulnerability = "deny"
+unmaintained = "deny"
+yanked = "deny"
+notice = "deny"
 [licenses]
+unlicensed = "deny"
 allow = [
     "AGPL-3.0",
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "ISC",
+    "MIT",
 ]
+copyleft = "deny"
+allow-osi-fsf-free = "neither"
+default = "deny"
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
 [sources]
-allow-registry = []
-allow-git = []
+unknown-registry = "deny"
+unknown-git = "deny"
